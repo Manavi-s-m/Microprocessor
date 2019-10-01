@@ -1,0 +1,79 @@
+.model small
+
+.data
+no db ?
+no1 dw ?
+no2 dw ?
+msg db 13,10,"Enter the number of Fibonacii numbers to be displayed $"
+zerr db 13,10,"Pls enter any other number other than 0$"
+ms1 db 13,10,"The fibonacii numbers are",13,10,'$'
+
+.code
+start:  mov ax,@data
+           mov ds,ax
+lp1:     mov ah,09h
+           lea dx,msg
+           int 21h
+           mov ah,01h
+           int 21h
+           sub al,'0'
+           mov bl,al
+           int 21h
+           sub al,'0'
+           mov ah,00h
+           xchg al,bl
+           mov bh,0ah
+           mul bh
+           add al,bl
+           mov no,al
+           mov cl,al
+           mov ch,00h
+           cmp al,00h
+           jne cnt
+           lea dx,zerr
+           mov ah,09h
+           int 21h
+           jmp lp1
+cnt:     lea dx,ms1
+           mov ah,09h
+           int 21h
+           mov ax,00h
+           mov bx,01h
+           mov no1,ax
+           mov no2,bx
+lp2:     call disp
+           mov ax,no1
+           mov bx,no2
+           mov dx,ax
+           add dx,bx
+           mov ax,bx
+           mov bx,dx
+           mov no1,ax
+           mov no2,bx
+           loop lp2
+           mov ah,4ch
+           int 21h
+
+           disp proc
+           push cx
+           mov cx,05h
+           mov bx,0ah
+lp:       mov dx,00h
+           div bx
+           push dx
+           loop lp
+           mov ah,02h
+           mov cx,05h
+lp3:     pop dx
+           add dl,'0'
+           int 21h
+           loop lp3
+           mov dl,0dh
+           int 21h
+           mov dl,0ah
+           int 21h
+           pop cx
+           ret
+           disp endp
+end start
+
